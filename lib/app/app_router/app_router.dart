@@ -122,7 +122,6 @@ import 'package:expense_project/features/analytics/analytics_page.dart';
 import 'package:expense_project/features/bills/bills_page.dart';
 import 'package:expense_project/features/categories/categories_page.dart';
 import 'package:expense_project/features/settings/modern_settings_page.dart';
-import 'package:expense_project/features/settings/settings_page.dart';
 import 'package:expense_project/features/transactions/transaction_add_page.dart';
 import 'package:expense_project/features/transactions/transactions_list_page.dart';
 import 'package:flutter/material.dart';

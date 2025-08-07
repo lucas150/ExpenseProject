@@ -1856,6 +1856,7 @@
 //   }
 // }
 
+import 'package:expense_project/features/accounts/accounts_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:expense_project/core/services/database_service.dart';
@@ -1863,6 +1864,7 @@ import 'package:expense_project/core/models/transaction_model.dart';
 import 'package:expense_project/core/models/account_model.dart';
 import 'package:expense_project/core/models/bill_model.dart';
 import 'package:expense_project/features/categories/categories_management_page.dart';
+import 'package:go_router/go_router.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
@@ -2225,12 +2227,13 @@ class ModernSettingsPage extends ConsumerWidget {
 
   void _navigateToAccounts(BuildContext context) {
     // Navigate to accounts page - replace with your actual accounts page
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: const Text('Accounts page not implemented yet'),
-        action: SnackBarAction(label: 'OK', onPressed: () {}),
-      ),
-    );
+    // ScaffoldMessenger.of(context).showSnackBar(
+    //   SnackBar(
+    //     content: const Text('Accounts page not implemented yet'),
+    //     action: SnackBarAction(label: 'OK', onPressed: () {}),
+    //   ),
+    // );
+    context.go('/accounts');
   }
 
   void _showCurrencySelector(BuildContext context, WidgetRef ref) {
