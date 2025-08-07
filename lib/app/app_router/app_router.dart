@@ -72,7 +72,6 @@
 //   ],
 // );
 
-
 // // import 'package:flutter/material.dart';
 // // import 'package:go_router/go_router.dart';
 
@@ -122,6 +121,7 @@ import 'package:expense_project/features/accounts/accounts_page.dart';
 import 'package:expense_project/features/analytics/analytics_page.dart';
 import 'package:expense_project/features/bills/bills_page.dart';
 import 'package:expense_project/features/categories/categories_page.dart';
+import 'package:expense_project/features/settings/modern_settings_page.dart';
 import 'package:expense_project/features/settings/settings_page.dart';
 import 'package:expense_project/features/transactions/transaction_add_page.dart';
 import 'package:expense_project/features/transactions/transactions_list_page.dart';
@@ -146,7 +146,8 @@ final routerProvider = GoRouter(
         /// DASHBOARD
         GoRoute(
           path: '/dashboard',
-          pageBuilder: (_, __) => const NoTransitionPage(child: DashboardPage()),
+          pageBuilder: (_, __) =>
+              const NoTransitionPage(child: ModernDashboardPage()),
         ),
 
         /// TRANSACTIONS
@@ -165,7 +166,10 @@ final routerProvider = GoRouter(
         GoRoute(path: '/accounts', builder: (_, __) => const AccountsPage()),
 
         /// CATEGORIES
-        GoRoute(path: '/categories', builder: (_, __) => const CategoriesPage()),
+        GoRoute(
+          path: '/categories',
+          builder: (_, __) => const CategoriesPage(),
+        ),
 
         /// BILLS
         GoRoute(path: '/bills', builder: (_, __) => const BillsPage()),
@@ -174,7 +178,10 @@ final routerProvider = GoRouter(
         GoRoute(path: '/analytics', builder: (_, __) => const AnalyticsPage()),
 
         /// SETTINGS
-        GoRoute(path: '/settings', builder: (_, __) => const SettingsPage()),
+        GoRoute(
+          path: '/settings',
+          builder: (_, __) => const ModernSettingsPage(),
+        ),
       ],
     ),
 
@@ -205,7 +212,9 @@ class _MainScaffoldState extends State<_MainScaffold> {
   ];
 
   int get _index {
-    final currentPath = GoRouterState.of(context).uri.toString().split('?').first;
+    final currentPath = GoRouterState.of(
+      context,
+    ).uri.toString().split('?').first;
     final index = _tabs.indexOf(currentPath);
     return index < 0 ? 0 : index;
   }
