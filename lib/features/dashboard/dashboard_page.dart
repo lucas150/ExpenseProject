@@ -33,80 +33,83 @@ class _ModernDashboardPageState extends ConsumerState<ModernDashboardPage> {
     return Scaffold(
       backgroundColor: bg,
       body: SafeArea(
+        top: false, // disables SafeArea's default top padding
+
+        minimum: const EdgeInsets.only(top: 12), // adds exactly 12px
         child: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Note & Go',
-                        style: TextStyle(
-                          fontSize: 28,
-                          fontWeight: FontWeight.w200,
-                          color: text1,
-                          letterSpacing: -0.3,
-                        ),
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        _getTimeLabel(),
-                        style: TextStyle(
-                          fontSize: 13,
-                          color: text2,
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      GestureDetector(
-                        onTap: () => setState(() {
-                          _timeFilter = _timeFilter == 'month'
-                              ? 'all'
-                              : 'month';
-                        }),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 6,
-                          ),
-                          decoration: BoxDecoration(
-                            color: _timeFilter == 'month' ? accent : surface,
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          child: Text(
-                            _timeFilter == 'month' ? 'Month' : 'All',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: _timeFilter == 'month'
-                                  ? Colors.white
-                                  : text2,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      // Settings
-                      GestureDetector(
-                        onTap: () => context.go('/settings'),
-                        child: Icon(Icons.more_horiz, color: text2, size: 20),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
+            // Padding(
+            //   padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+            //     child: Row(
+            //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //       children: [
+            //         Column(
+            //           crossAxisAlignment: CrossAxisAlignment.start,
+            //           children: [
+            //             Text(
+            //               'Note & Go',
+            //               style: TextStyle(
+            //                 fontSize: 28,
+            //                 fontWeight: FontWeight.w200,
+            //                 color: text1,
+            //                 letterSpacing: -0.3,
+            //               ),
+            //             ),
+            //             const SizedBox(height: 2),
+            //             Text(
+            //               _getTimeLabel(),
+            //               style: TextStyle(
+            //                 fontSize: 13,
+            //                 color: text2,
+            //                 fontWeight: FontWeight.w400,
+            //               ),
+            //             ),
+            //           ],
+            //         ),
+            //         Row(
+            //           children: [
+            //             GestureDetector(
+            //               onTap: () => setState(() {
+            //                 _timeFilter = _timeFilter == 'month'
+            //                     ? 'all'
+            //                     : 'month';
+            //               }),
+            //               child: Container(
+            //                 padding: const EdgeInsets.symmetric(
+            //                   horizontal: 12,
+            //                   vertical: 6,
+            //                 ),
+            //                 decoration: BoxDecoration(
+            //                   color: _timeFilter == 'month' ? accent : surface,
+            //                   borderRadius: BorderRadius.circular(16),
+            //                 ),
+            //                 child: Text(
+            //                   _timeFilter == 'month' ? 'Month' : 'All',
+            //                   style: TextStyle(
+            //                     fontSize: 12,
+            //                     color: _timeFilter == 'month'
+            //                         ? Colors.white
+            //                         : text2,
+            //                     fontWeight: FontWeight.w500,
+            //                   ),
+            //                 ),
+            //               ),
+            //             ),
+            //             const SizedBox(width: 12),
+            //             // Settings
+            //             GestureDetector(
+            //               onTap: () => context.go('/settings'),
+            //               child: Icon(Icons.more_horiz, color: text2, size: 20),
+            //             ),
+            //           ],
+            //         ),
+            //       ],
+            //     ),
+            //   ),
 
-            const SizedBox(height: 32),
+            // const SizedBox(height: 32),
 
-            // Pure minimalist balance
+            // Balance
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: _buildBalance(surface, text1, text2, green, red),
@@ -114,34 +117,6 @@ class _ModernDashboardPageState extends ConsumerState<ModernDashboardPage> {
 
             const SizedBox(height: 24),
 
-            // Single action button
-            // Padding(
-            //   padding: const EdgeInsets.symmetric(horizontal: 20),
-            //   child: GestureDetector(
-            //     onTap: () => context.go('/dashboard/add'),
-            //     child: Container(
-            //       width: double.infinity,
-            //       height: 44,
-            //       decoration: BoxDecoration(
-            //         color: accent,
-            //         borderRadius: BorderRadius.circular(8),
-            //       ),
-            //       child: Center(
-            //         child: Text(
-            //           'Add Transaction',
-            //           style: const TextStyle(
-            //             color: Colors.white,
-            //             fontSize: 15,
-            //             fontWeight: FontWeight.w500,
-            //           ),
-            //         ),
-            //       ),
-            //     ),
-            //   ),
-            // ),
-            // const SizedBox(height: 32),
-
-            // Transactions header - minimal
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Align(
@@ -159,7 +134,7 @@ class _ModernDashboardPageState extends ConsumerState<ModernDashboardPage> {
 
             const SizedBox(height: 16),
 
-            // Clean transactions list
+            //Transactions list
             Expanded(
               child: transactionsAsync.when(
                 loading: () => Center(
@@ -291,7 +266,7 @@ class _ModernDashboardPageState extends ConsumerState<ModernDashboardPage> {
                     balance >= 0 ? 'Balance' : 'Over budget',
                     style: TextStyle(fontSize: 13, color: text2),
                   ),
-                  const SizedBox(height: 20),
+                  // const SizedBox(height: 20),
                   // Income/Expenses
                   Row(
                     children: [

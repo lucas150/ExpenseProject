@@ -1,13 +1,12 @@
 // lib/features/dashboard/widgets/modern_transaction_list.dart
-import 'package:expense_project/core/currency_provider.dart';
-import 'package:expense_project/features/transactions/edit_transaction_page.dart';
+
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../../../core/models/transaction_model.dart';
 
 // class ModernTransactionList extends ConsumerWidget {
-  // final List<TransactionModel> transactions;
-// 
+// final List<TransactionModel> transactions;
+//
 //   const ModernTransactionList({super.key, required this.transactions});
 
 //   @override
@@ -156,8 +155,6 @@ import '../../../core/models/transaction_model.dart';
 //   }
 // }
 
-import 'package:expense_project/core/models/transaction_model.dart';
-import 'package:flutter/material.dart';
 
 class ModernTransactionList extends StatelessWidget {
   late final List<TransactionModel> transactions;
@@ -171,8 +168,15 @@ class ModernTransactionList extends StatelessWidget {
       itemBuilder: (_, index) {
         final t = transactions[index];
         return ListTile(
-          leading: Icon(t.type == TransactionType.income ? Icons.arrow_downward : Icons.arrow_upward),
-          title: Text(t.title, style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+          leading: Icon(
+            t.type == TransactionType.income
+                ? Icons.arrow_downward
+                : Icons.arrow_upward,
+          ),
+          title: Text(
+            t.title,
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+          ),
           subtitle: Text('${t.category ?? ''} • ${t.account ?? ''}'),
           trailing: Text('₹${t.amount.toStringAsFixed(0)}'),
         );
@@ -180,4 +184,3 @@ class ModernTransactionList extends StatelessWidget {
     );
   }
 }
-
