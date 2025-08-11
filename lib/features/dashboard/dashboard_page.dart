@@ -3,6 +3,7 @@ import 'package:expense_project/features/transactions/transactions_provider.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:expense_project/features/dashboard/widgets/transaction_row.dart';
 
 class ModernDashboardPage extends ConsumerStatefulWidget {
   const ModernDashboardPage({super.key});
@@ -23,7 +24,9 @@ class _ModernDashboardPageState extends ConsumerState<ModernDashboardPage> {
     //  color scheme - maximum simplicity
     final isDark = theme.brightness == Brightness.dark;
     final bg = isDark ? const Color(0xFF000000) : const Color(0xFFFFFFFF);
-    final surface = isDark ? const Color(0xFF111111) : const Color(0xFFFBFBFB);
+    final surface = isDark
+        ? const Color.fromARGB(255, 27, 26, 26)
+        : const Color.fromARGB(255, 239, 239, 239);
     final text1 = isDark ? const Color(0xFFFFFFFF) : const Color(0xFF000000);
     final text2 = isDark ? const Color(0xFF888888) : const Color(0xFF666666);
     final accent = const Color(0xFF007AFF); // Single blue accent
@@ -38,81 +41,10 @@ class _ModernDashboardPageState extends ConsumerState<ModernDashboardPage> {
         minimum: const EdgeInsets.only(top: 12), // adds exactly 12px
         child: Column(
           children: [
-            // Padding(
-            //   padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
-            //     child: Row(
-            //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //       children: [
-            //         Column(
-            //           crossAxisAlignment: CrossAxisAlignment.start,
-            //           children: [
-            //             Text(
-            //               'Note & Go',
-            //               style: TextStyle(
-            //                 fontSize: 28,
-            //                 fontWeight: FontWeight.w200,
-            //                 color: text1,
-            //                 letterSpacing: -0.3,
-            //               ),
-            //             ),
-            //             const SizedBox(height: 2),
-            //             Text(
-            //               _getTimeLabel(),
-            //               style: TextStyle(
-            //                 fontSize: 13,
-            //                 color: text2,
-            //                 fontWeight: FontWeight.w400,
-            //               ),
-            //             ),
-            //           ],
-            //         ),
-            //         Row(
-            //           children: [
-            //             GestureDetector(
-            //               onTap: () => setState(() {
-            //                 _timeFilter = _timeFilter == 'month'
-            //                     ? 'all'
-            //                     : 'month';
-            //               }),
-            //               child: Container(
-            //                 padding: const EdgeInsets.symmetric(
-            //                   horizontal: 12,
-            //                   vertical: 6,
-            //                 ),
-            //                 decoration: BoxDecoration(
-            //                   color: _timeFilter == 'month' ? accent : surface,
-            //                   borderRadius: BorderRadius.circular(16),
-            //                 ),
-            //                 child: Text(
-            //                   _timeFilter == 'month' ? 'Month' : 'All',
-            //                   style: TextStyle(
-            //                     fontSize: 12,
-            //                     color: _timeFilter == 'month'
-            //                         ? Colors.white
-            //                         : text2,
-            //                     fontWeight: FontWeight.w500,
-            //                   ),
-            //                 ),
-            //               ),
-            //             ),
-            //             const SizedBox(width: 12),
-            //             // Settings
-            //             GestureDetector(
-            //               onTap: () => context.go('/settings'),
-            //               child: Icon(Icons.more_horiz, color: text2, size: 20),
-            //             ),
-            //           ],
-            //         ),
-            //       ],
-            //     ),
-            //   ),
-
-            // const SizedBox(height: 32),
-
             // Balance
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: _buildBalance(surface, text1, text2, green, red),
+              child: balance(surface, text1, text2, green, red),
             ),
 
             const SizedBox(height: 24),
@@ -136,59 +68,75 @@ class _ModernDashboardPageState extends ConsumerState<ModernDashboardPage> {
 
             //Transactions list
             Expanded(
-              child: transactionsAsync.when(
-                loading: () => Center(
-                  child: SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: accent,
+              child: Container(
+                padding: const EdgeInsets.all(4), // inner padding for content
+                decoration: BoxDecoration(
+                  color: surface, // your surface color from theme
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: transactionsAsync.when(
+                  loading: () => Center(
+                    child: SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: accent,
+                      ),
                     ),
                   ),
-                ),
-                error: (error, stack) => Center(
-                  child: Text(
-                    'Error loading transactions',
-                    style: TextStyle(color: text2, fontSize: 14),
+                  error: (error, stack) => Center(
+                    child: Text(
+                      'Error loading transactions',
+                      style: TextStyle(color: text2, fontSize: 14),
+                    ),
                   ),
-                ),
-                data: (transactions) {
-                  final filtered = _getFilteredTransactions(transactions);
+                  data: (transactions) {
+                    final filtered = getFilteredTransactions(transactions);
 
-                  if (filtered.isEmpty) {
-                    return Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.receipt_outlined, color: text2, size: 48),
-                          const SizedBox(height: 16),
-                          Text(
-                            'No transactions',
-                            style: TextStyle(color: text2, fontSize: 16),
-                          ),
-                        ],
-                      ),
-                    );
-                  }
-
-                  return ListView.separated(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    itemCount: filtered.length,
-                    separatorBuilder: (context, index) =>
-                        const SizedBox(height: 1),
-                    itemBuilder: (context, index) {
-                      final transaction = filtered[index];
-                      return _buildCleanTransactionRow(
-                        transaction,
-                        text1,
-                        text2,
-                        green,
-                        red,
+                    if (filtered.isEmpty) {
+                      return Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.receipt_outlined,
+                              color: text2,
+                              size: 48,
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
+                              'No transactions',
+                              style: TextStyle(color: text2, fontSize: 16),
+                            ),
+                          ],
+                        ),
                       );
-                    },
-                  );
-                },
+                    }
+
+                    return ListView.separated(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      itemCount: filtered.length,
+
+                      separatorBuilder: (context, index) => Divider(
+                        color: text2.withOpacity(0.15), // soft, barely there
+                        thickness: 0.6,
+                        // height: 12,
+                      ),
+                      itemBuilder: (context, index) {
+                        final transaction = filtered[index];
+                        return transactionRow(
+                          ref,
+                          transaction,
+                          text1,
+                          text2,
+                          green,
+                          red,
+                        );
+                      },
+                    );
+                  },
+                ),
               ),
             ),
           ],
@@ -210,7 +158,7 @@ class _ModernDashboardPageState extends ConsumerState<ModernDashboardPage> {
     );
   }
 
-  Widget _buildBalance(
+  Widget balance(
     Color surface,
     Color text1,
     Color text2,
@@ -233,7 +181,7 @@ class _ModernDashboardPageState extends ConsumerState<ModernDashboardPage> {
             ),
           ),
           data: (transactions) {
-            final filtered = _getFilteredTransactions(transactions);
+            final filtered = getFilteredTransactions(transactions);
             final income = filtered
                 .where((t) => t.type == TransactionType.income)
                 .fold(0.0, (sum, t) => sum + t.amount);
@@ -251,7 +199,7 @@ class _ModernDashboardPageState extends ConsumerState<ModernDashboardPage> {
               ),
               child: Column(
                 children: [
-                  // Balance
+                  // Balance - focal point
                   Text(
                     '₹${balance.abs().toStringAsFixed(0)}',
                     style: TextStyle(
@@ -266,8 +214,8 @@ class _ModernDashboardPageState extends ConsumerState<ModernDashboardPage> {
                     balance >= 0 ? 'Balance' : 'Over budget',
                     style: TextStyle(fontSize: 13, color: text2),
                   ),
-                  // const SizedBox(height: 20),
-                  // Income/Expenses
+                  const SizedBox(height: 20),
+                  // Income/Expenses - ultra-minimal
                   Row(
                     children: [
                       Expanded(
@@ -292,74 +240,6 @@ class _ModernDashboardPageState extends ConsumerState<ModernDashboardPage> {
           },
         );
       },
-    );
-  }
-
-  Widget _buildCleanTransactionRow(
-    TransactionModel transaction,
-    Color text1,
-    Color text2,
-    Color green,
-    Color red,
-  ) {
-    final isExpense = transaction.type == TransactionType.expense;
-
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-      child: Row(
-        children: [
-          // indicator
-          Container(
-            width: 3,
-            height: 24,
-            decoration: BoxDecoration(
-              color: isExpense ? red : green,
-              borderRadius: BorderRadius.circular(2),
-            ),
-          ),
-          const SizedBox(width: 16),
-          // Transaction info
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  transaction.title,
-                  style: TextStyle(
-                    fontSize: 15,
-                    color: text1,
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  transaction.category ?? '',
-                  style: TextStyle(fontSize: 12, color: text2),
-                ),
-              ],
-            ),
-          ),
-          // Amount and date
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                '${isExpense ? '-' : '+'}₹${transaction.amount.toStringAsFixed(0)}',
-                style: TextStyle(
-                  fontSize: 15,
-                  color: isExpense ? red : green,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              const SizedBox(height: 2),
-              Text(
-                _formatSimpleDate(transaction.date),
-                style: TextStyle(fontSize: 11, color: text2),
-              ),
-            ],
-          ),
-        ],
-      ),
     );
   }
 
@@ -396,7 +276,7 @@ class _ModernDashboardPageState extends ConsumerState<ModernDashboardPage> {
     return '${date.day}/${date.month}';
   }
 
-  List<TransactionModel> _getFilteredTransactions(
+  List<TransactionModel> getFilteredTransactions(
     List<TransactionModel> transactions,
   ) {
     var filtered = transactions.toList();

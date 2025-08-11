@@ -432,7 +432,7 @@ class _MinimalistMainScaffoldState extends State<MinimalistMainScaffold> {
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 8,
-                    // vertical: 8,
+                    vertical: 8,
                   ),
                   child: Row(
                     children: [
