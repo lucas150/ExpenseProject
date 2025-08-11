@@ -14,7 +14,7 @@ class ModernDashboardPage extends ConsumerStatefulWidget {
 }
 
 class _ModernDashboardPageState extends ConsumerState<ModernDashboardPage> {
-  String _timeFilter = 'month'; // Only essential filter: this month, all time
+  // String _timeFilter = 'month'; // Only essential filter: this month, all time
 
   @override
   Widget build(BuildContext context) {
@@ -243,38 +243,38 @@ class _ModernDashboardPageState extends ConsumerState<ModernDashboardPage> {
     );
   }
 
-  String _getTimeLabel() {
-    if (_timeFilter == 'month') {
-      final now = DateTime.now();
-      final months = [
-        'January',
-        'February',
-        'March',
-        'April',
-        'May',
-        'June',
-        'July',
-        'August',
-        'September',
-        'October',
-        'November',
-        'December',
-      ];
-      return months[now.month - 1];
-    }
-    return 'All time';
-  }
+  // String _getTimeLabel() {
+  //   if (_timeFilter == 'month') {
+  //     final now = DateTime.now();
+  //     final months = [
+  //       'January',
+  //       'February',
+  //       'March',
+  //       'April',
+  //       'May',
+  //       'June',
+  //       'July',
+  //       'August',
+  //       'September',
+  //       'October',
+  //       'November',
+  //       'December',
+  //     ];
+  //     return months[now.month - 1];
+  //   }
+  //   return 'All time';
+  // }
 
-  String _formatSimpleDate(DateTime date) {
-    final now = DateTime.now();
-    final diff = now.difference(date).inDays;
+  // String _formatSimpleDate(DateTime date) {
+  //   final now = DateTime.now();
+  //   final diff = now.difference(date).inDays;
 
-    if (diff == 0) return 'Today';
-    if (diff == 1) return 'Yesterday';
-    if (diff < 7) return '${diff}d';
+  //   if (diff == 0) return 'Today';
+  //   if (diff == 1) return 'Yesterday';
+  //   if (diff < 7) return '${diff}d';
 
-    return '${date.day}/${date.month}';
-  }
+  //   return '${date.day}/${date.month}';
+  // }
 
   List<TransactionModel> getFilteredTransactions(
     List<TransactionModel> transactions,
@@ -282,11 +282,11 @@ class _ModernDashboardPageState extends ConsumerState<ModernDashboardPage> {
     var filtered = transactions.toList();
 
     // Only one filter - time-based
-    if (_timeFilter == 'month') {
-      final now = DateTime.now();
-      final monthStart = DateTime(now.year, now.month, 1);
-      filtered = filtered.where((t) => t.date.isAfter(monthStart)).toList();
-    }
+    // if (_timeFilter == 'month') {
+    //   final now = DateTime.now();
+    //   final monthStart = DateTime(now.year, now.month, 1);
+    //   filtered = filtered.where((t) => t.date.isAfter(monthStart)).toList();
+    // }
 
     // Sort by date
     filtered.sort((a, b) => b.date.compareTo(a.date));
