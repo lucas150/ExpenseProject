@@ -15,8 +15,6 @@ class ModernDashboardPage extends ConsumerStatefulWidget {
 }
 
 class _ModernDashboardPageState extends ConsumerState<ModernDashboardPage> {
-  // String _timeFilter = 'month'; // Only essential filter: this month, all time
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -115,25 +113,80 @@ class _ModernDashboardPageState extends ConsumerState<ModernDashboardPage> {
                       );
                     }
 
+                    // Show only first 5 transactions
+                    final transactionsToShow = filtered.take(5).toList();
+                    final hasMoreTransactions = filtered.length > 5;
+
                     return ListView.separated(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
-                      itemCount: filtered.length,
-
-                      separatorBuilder: (context, index) => Divider(
-                        color: text2.withOpacity(0.15), // soft, barely there
-                        thickness: 0.6,
-                        // height: 12,
-                      ),
-                      itemBuilder: (context, index) {
-                        final transaction = filtered[index];
-                        return transactionRow(
-                          ref,
-                          transaction,
-                          text1,
-                          text2,
-                          green,
-                          red,
+                      itemCount: hasMoreTransactions
+                          ? transactionsToShow.length + 1
+                          : transactionsToShow.length,
+                      separatorBuilder: (context, index) {
+                        if (index == transactionsToShow.length) {
+                          return const SizedBox.shrink(); // No separator after last transaction
+                        }
+                        return Divider(
+                          color: text2.withOpacity(0.15), // soft, barely there
+                          thickness: 0.6,
                         );
+                      },
+                      itemBuilder: (context, index) {
+                        if (index < transactionsToShow.length) {
+                          final transaction = transactionsToShow[index];
+                          return transactionRow(
+                            ref,
+                            transaction,
+                            text1,
+                            text2,
+                            green,
+                            red,
+                          );
+                        } else {
+                          // See More button as last item
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            child: Align(
+                              alignment: Alignment.centerRight,
+                              child: TextButton(
+                                onPressed: () {
+                                  // Navigate to all transactions page
+                                  context.push(
+                                    '/transactions',
+                                  ); // Adjust route as needed
+                                },
+                                style: TextButton.styleFrom(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 6,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      'See More',
+                                      style: TextStyle(
+                                        color: accent,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Icon(
+                                      Icons.arrow_forward_ios,
+                                      color: accent,
+                                      size: 14,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          );
+                        }
                       },
                     );
                   },
@@ -251,52 +304,11 @@ class _ModernDashboardPageState extends ConsumerState<ModernDashboardPage> {
     );
   }
 
-  // String _getTimeLabel() {
-  //   if (_timeFilter == 'month') {
-  //     final now = DateTime.now();
-  //     final months = [
-  //       'January',
-  //       'February',
-  //       'March',
-  //       'April',
-  //       'May',
-  //       'June',
-  //       'July',
-  //       'August',
-  //       'September',
-  //       'October',
-  //       'November',
-  //       'December',
-  //     ];
-  //     return months[now.month - 1];
-  //   }
-  //   return 'All time';
-  // }
-
-  // String _formatSimpleDate(DateTime date) {
-  //   final now = DateTime.now();
-  //   final diff = now.difference(date).inDays;
-
-  //   if (diff == 0) return 'Today';
-  //   if (diff == 1) return 'Yesterday';
-  //   if (diff < 7) return '${diff}d';
-
-  //   return '${date.day}/${date.month}';
-  // }
-
   List<TransactionModel> getFilteredTransactions(
     List<TransactionModel> transactions,
   ) {
     var filtered = transactions.toList();
 
-    // Only one filter - time-based
-    // if (_timeFilter == 'month') {
-    //   final now = DateTime.now();
-    //   final monthStart = DateTime(now.year, now.month, 1);
-    //   filtered = filtered.where((t) => t.date.isAfter(monthStart)).toList();
-    // }
-
-    // Sort by date
     filtered.sort((a, b) => b.date.compareTo(a.date));
 
     return filtered;
