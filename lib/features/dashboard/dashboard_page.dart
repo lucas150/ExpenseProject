@@ -1,4 +1,5 @@
 import 'package:expense_project/core/models/transaction_model.dart';
+import 'package:expense_project/features/transactions/transaction_add_page.dart';
 import 'package:expense_project/features/transactions/transactions_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -143,7 +144,14 @@ class _ModernDashboardPageState extends ConsumerState<ModernDashboardPage> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => context.go('/dashboard/add'),
+        onPressed: () {
+          showModalBottomSheet(
+            context: context,
+            isScrollControlled: true,
+            backgroundColor: Colors.transparent, // Semi-transparent overlay
+            builder: (context) => const AddTransactionPage(),
+          );
+        },
         backgroundColor: accent.withOpacity(0.9), // Softer tone
         elevation: 0, // No shadow
         shape: RoundedRectangleBorder(
