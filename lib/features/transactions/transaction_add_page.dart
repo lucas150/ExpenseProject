@@ -347,11 +347,15 @@ class _AddTransactionPageState extends ConsumerState<AddTransactionPage> {
                     children: [
                       Icon(Icons.add_circle_outline, color: accent, size: 18),
                       const SizedBox(width: 8),
-                      Text(
-                        'Add New Account',
-                        style: TextStyle(
-                          color: accent,
-                          fontWeight: FontWeight.w500,
+                      Expanded(
+                        child: Text(
+                          'Add New Account',
+                          style: TextStyle(
+                            color: accent,
+                            fontWeight: FontWeight.w500,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
                         ),
                       ),
                     ],
@@ -437,11 +441,15 @@ class _AddTransactionPageState extends ConsumerState<AddTransactionPage> {
                     children: [
                       Icon(Icons.add_circle_outline, color: accent, size: 18),
                       const SizedBox(width: 8),
-                      Text(
-                        'Add New Category',
-                        style: TextStyle(
-                          color: accent,
-                          fontWeight: FontWeight.w500,
+                      Expanded(
+                        child: Text(
+                          'Add New Category',
+                          style: TextStyle(
+                            color: accent,
+                            fontWeight: FontWeight.w500,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
                         ),
                       ),
                     ],
