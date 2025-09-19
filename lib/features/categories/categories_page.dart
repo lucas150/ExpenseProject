@@ -51,6 +51,7 @@ class _CategoriesPageState extends ConsumerState<CategoriesPage>
     }
 
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         title: const Text('Categories'),
         bottom: TabBar(

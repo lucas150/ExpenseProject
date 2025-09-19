@@ -599,6 +599,7 @@ class AccountsPage extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: bgColor,
+      resizeToAvoidBottomInset: true,
       body: accAsync.when(
         loading: () => Center(
           child: CircularProgressIndicator(strokeWidth: 2, color: accent),

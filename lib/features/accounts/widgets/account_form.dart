@@ -150,9 +150,9 @@ class _AccountFormState extends State<AccountForm> {
         },
         child: DraggableScrollableSheet(
           controller: _dragController,
-          initialChildSize: 0.9,
+          initialChildSize: 0.75,
           minChildSize: 0.2,
-          maxChildSize: 0.90,
+          maxChildSize: 0.80,
           snap: true,
           snapSizes: const [0.2, 0.5, 0.8],
           builder: (context, scrollController) {

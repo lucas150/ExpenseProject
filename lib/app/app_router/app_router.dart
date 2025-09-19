@@ -1242,15 +1242,41 @@ class _MinimalistMainScaffoldState extends State<MinimalistMainScaffold> {
             children: [
               // Top bar with menu + title
               SafeArea(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 8,
-                  ),
-                  child: Row(
-                    children: [
+                // child: Padding(
+                //   padding: const EdgeInsets.symmetric(
+                //     horizontal: 8,
+                //     vertical: 8,
+                //   ),
+                child: Row(
+                  children: [
+                    GestureDetector(
+                      onTap: _toggleSidebar,
+                      child: Container(
+                        width: 36,
+                        height: 36,
+                        decoration: BoxDecoration(
+                          color: accent.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Icon(Icons.menu, color: accent, size: 20),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Text(
+                      'Note & Go',
+                      style: TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.w200,
+                        color: textColor,
+                        letterSpacing: -0.3,
+                      ),
+                    ),
+
+                    // Back button for non-dashboard pages
+                    if (widget.currentPath != '/dashboard') ...[
+                      const Spacer(),
                       GestureDetector(
-                        onTap: _toggleSidebar,
+                        onTap: _handleBackNavigation,
                         child: Container(
                           width: 36,
                           height: 36,
@@ -1258,43 +1284,17 @@ class _MinimalistMainScaffoldState extends State<MinimalistMainScaffold> {
                             color: accent.withOpacity(0.1),
                             borderRadius: BorderRadius.circular(8),
                           ),
-                          child: Icon(Icons.menu, color: accent, size: 20),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Text(
-                        'Note & Go',
-                        style: TextStyle(
-                          fontSize: 28,
-                          fontWeight: FontWeight.w200,
-                          color: textColor,
-                          letterSpacing: -0.3,
-                        ),
-                      ),
-
-                      // Back button for non-dashboard pages
-                      if (widget.currentPath != '/dashboard') ...[
-                        const Spacer(),
-                        GestureDetector(
-                          onTap: _handleBackNavigation,
-                          child: Container(
-                            width: 36,
-                            height: 36,
-                            decoration: BoxDecoration(
-                              color: accent.withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Icon(
-                              Icons.arrow_back_ios_new,
-                              color: accent,
-                              size: 18,
-                            ),
+                          child: Icon(
+                            Icons.arrow_back_ios_new,
+                            color: accent,
+                            size: 18,
                           ),
                         ),
-                      ],
+                      ),
                     ],
-                  ),
+                  ],
                 ),
+                // ),
               ),
               Expanded(child: widget.child),
             ],

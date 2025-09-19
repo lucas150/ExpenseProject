@@ -88,11 +88,11 @@ class _AddTransactionPageState extends ConsumerState<AddTransactionPage> {
         },
         child: DraggableScrollableSheet(
           controller: _dragController,
-          initialChildSize: 0.9,
+          initialChildSize: 0.7,
           minChildSize: 0.2,
-          maxChildSize: 0.95,
+          maxChildSize: 0.8,
           snap: true,
-          snapSizes: const [0.2, 0.6, 0.9],
+          snapSizes: const [0.2, 0.6, 0.8],
           builder: (context, scrollController) {
             return GestureDetector(
               // Prevent closing when tapping inside the sheet

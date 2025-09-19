@@ -2321,34 +2321,36 @@ class _EditTransactionPageState extends ConsumerState<EditTransactionPage> {
             : _noteController.text.trim(),
       );
 
-   await ref.read(transactionsProvider.notifier).updateTransaction(updatedTransaction);
+      await ref
+          .read(transactionsProvider.notifier)
+          .updateTransaction(updatedTransaction);
 
-    if (mounted) {
-      // Simple success feedback and navigation
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('Transaction updated successfully!'),
-          backgroundColor: const Color(0xFF34C759),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
-      
-      // Use Navigator.pop() consistently
-      Navigator.of(context).pop();
-    }
-  } catch (e) {
-    if (mounted) {
-      setState(() => _isProcessing = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Error: $e'),
-          backgroundColor: const Color(0xFFFF3B30),
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
+      if (mounted) {
+        // Simple success feedback and navigation
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('Transaction updated successfully!'),
+            backgroundColor: const Color(0xFF34C759),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+
+        // Use Navigator.pop() consistently
+        Navigator.of(context).pop();
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _isProcessing = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error: $e'),
+            backgroundColor: const Color(0xFFFF3B30),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
     }
   }
-}
 
   void _showDeleteConfirmation() {
     if (!mounted || _isProcessing) return;
