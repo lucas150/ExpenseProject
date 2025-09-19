@@ -28,8 +28,6 @@ class _AddTransactionPageState extends ConsumerState<AddTransactionPage> {
 
   // Add controller for the draggable sheet
   late DraggableScrollableController _dragController;
-  double _currentSize = 0.9;
-  bool _isDragging = false;
 
   @override
   void initState() {
@@ -47,20 +45,13 @@ class _AddTransactionPageState extends ConsumerState<AddTransactionPage> {
       _commentController.text = tx.note ?? tx.title;
     }
 
-    // Listen to sheet size changes
-    _dragController.addListener(() {
-      if (!_isDragging && _dragController.size < 0.4) {
-        // Auto-close if dragged below threshold
-        _closeSheet();
-      }
-      setState(() {
-        _currentSize = _dragController.size;
-      });
-    });
+    // Initialize controller without problematic listener
+    // Removed listener to prevent disposal issues
   }
 
   @override
   void dispose() {
+    // Dispose controllers safely without trying to remove listeners
     _commentController.dispose();
     _dragController.dispose();
     super.dispose();
@@ -79,7 +70,7 @@ class _AddTransactionPageState extends ConsumerState<AddTransactionPage> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final surface = isDark ? const Color(0xFF1C1C1E) : Colors.white;
     final text1 = isDark ? Colors.white : Colors.black;
-    final text2 = isDark ? Colors.grey! : Colors.grey!;
+    final text2 = isDark ? Colors.grey : Colors.grey;
     final accent = const Color(0xFF007AFF);
 
     final accountsAsync = ref.watch(accountsProvider);
@@ -108,17 +99,7 @@ class _AddTransactionPageState extends ConsumerState<AddTransactionPage> {
               onTap: () {},
               child: NotificationListener<ScrollNotification>(
                 onNotification: (notification) {
-                  if (notification is ScrollStartNotification) {
-                    _isDragging = true;
-                  } else if (notification is ScrollEndNotification) {
-                    _isDragging = false;
-                    // Check if should auto-close after scroll ends
-                    if (_currentSize < 0.4) {
-                      Future.delayed(Duration(milliseconds: 100), () {
-                        if (mounted) _closeSheet();
-                      });
-                    }
-                  }
+                  // Simple notification handling without auto-close
                   return false;
                 },
                 child: Container(
@@ -289,11 +270,11 @@ class _AddTransactionPageState extends ConsumerState<AddTransactionPage> {
 
                             // Comment
                             _buildCommentField(text2),
-                            const SizedBox(height: 20),
+                            const SizedBox(height: 16),
 
                             // Keypad
                             _buildKeypad(surface, text1, text2, accent),
-                            const SizedBox(height: 20),
+                            const SizedBox(height: 8),
                           ],
                         ),
                       ),
@@ -838,15 +819,27 @@ class _AddTransactionPageState extends ConsumerState<AddTransactionPage> {
 
   // Navigation methods for quick add
   Future<void> _navigateToAddAccount() async {
-    // Simple navigation without trying to reopen the sheet
-    Navigator.of(context).pop();
-    context.push('/accounts');
+    // Simple navigation without complex callbacks
+    if (mounted && Navigator.canPop(context)) {
+      Navigator.of(context).pop();
+      Future.delayed(Duration(milliseconds: 100), () {
+        if (mounted) {
+          context.push('/accounts');
+        }
+      });
+    }
   }
 
   Future<void> _navigateToAddCategory() async {
-    // Simple navigation without trying to reopen the sheet
-    Navigator.of(context).pop();
-    context.push('/categories');
+    // Simple navigation without complex callbacks
+    if (mounted && Navigator.canPop(context)) {
+      Navigator.of(context).pop();
+      Future.delayed(Duration(milliseconds: 100), () {
+        if (mounted) {
+          context.push('/categories');
+        }
+      });
+    }
   }
 
   // Helper methods
@@ -896,6 +889,8 @@ class _AddTransactionPageState extends ConsumerState<AddTransactionPage> {
       double.parse(_amount) > 0;
 
   void _selectDate() async {
+    if (!mounted) return;
+
     final picked = await showDatePicker(
       context: context,
       initialDate: _selectedDate,
@@ -910,14 +905,21 @@ class _AddTransactionPageState extends ConsumerState<AddTransactionPage> {
   void _saveTransaction() async {
     if (!_canSave()) {
       // Show specific error message
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Please enter a valid amount greater than 0'),
-          backgroundColor: Colors.orange,
-          duration: Duration(seconds: 2),
-        ),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Please enter a valid amount greater than 0'),
+            backgroundColor: Colors.orange,
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
       return;
+    }
+
+    // Unfocus text fields before navigation to prevent disposal issues
+    if (mounted) {
+      FocusScope.of(context).unfocus();
     }
 
     try {
@@ -943,7 +945,10 @@ class _AddTransactionPageState extends ConsumerState<AddTransactionPage> {
       }
 
       if (mounted) {
-        Navigator.pop(context);
+        // Simple navigation without complex callbacks
+        Navigator.of(context).pop();
+
+        // Show success message after navigation
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
@@ -1009,32 +1014,37 @@ class _AddTransactionPageState extends ConsumerState<AddTransactionPage> {
           ),
           TextButton(
             onPressed: () async {
-              Navigator.of(context).pop(); // Close dialog
+              if (mounted) {
+                Navigator.of(context).pop(); // Close dialog
 
-              try {
-                await ref
-                    .read(transactionsProvider.notifier)
-                    .deleteTransaction(widget.existingTransaction!.id);
+                try {
+                  await ref
+                      .read(transactionsProvider.notifier)
+                      .deleteTransaction(widget.existingTransaction!.id);
 
-                if (mounted) {
-                  Navigator.of(context).pop(); // Close AddTransactionPage
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Transaction deleted successfully'),
-                      backgroundColor: const Color(0xFF34C759),
-                      duration: Duration(seconds: 2),
-                    ),
-                  );
-                }
-              } catch (e) {
-                if (mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Error deleting transaction'),
-                      backgroundColor: const Color(0xFFFF3B30),
-                      duration: Duration(seconds: 2),
-                    ),
-                  );
+                  if (mounted) {
+                    // Close the edit transaction page immediately
+                    Navigator.of(context).pop();
+
+                    // Show success message
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Transaction deleted successfully'),
+                        backgroundColor: const Color(0xFF34C759),
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+                  }
+                } catch (e) {
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Error deleting transaction'),
+                        backgroundColor: const Color(0xFFFF3B30),
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+                  }
                 }
               }
             },
